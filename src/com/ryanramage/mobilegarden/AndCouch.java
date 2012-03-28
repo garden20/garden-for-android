@@ -1,4 +1,4 @@
-package com.daleharvey.mobilefuton;
+package com.ryanramage.mobilegarden;
 
 /*
  * AndCouch is a very simple http wrapper library for CouchDB with minimal

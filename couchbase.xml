@@ -1,5 +1,11 @@
 <project name="couchbase" default="manual">
 
+    <taskdef resource="net/sf/antcontrib/antcontrib.properties">
+      <classpath>
+        <pathelement location="${basedir}/ant-contrib-1.0b3.jar"/>
+      </classpath>
+    </taskdef>
+
 	<target name="manual">
 		<!-- unpack the Couchbase.zip in a secure tmp folder -->
 		<tempfile property="couchbase.tmp.dir" destDir="${java.io.tmpdir}"/>
@@ -11,6 +17,10 @@
 			<property name="project.path" value="${basedir}"/>
 			<property name="couchbase.tmp.dir" value="${couchbase.tmp.dir}"/>
 		</ant>
+
+        <inifile source="${basedir}/assets/install/couchdb/etc/couchdb/android.default.ini" dest="${basedir}/assets/install/couchdb/etc/couchdb/android.default.ini">
+           <set section="httpd" property="secure_rewrites" value="true" />
+        </inifile>
 
 		<!-- cleanup the tmp folder -->
 		<delete dir="${couchbase.tmp.dir}"/>

@@ -3,3 +3,4 @@ gen/
 assets/install
 assets/lib/
 libs/
+.idea

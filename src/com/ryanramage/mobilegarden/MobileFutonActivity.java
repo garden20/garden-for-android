@@ -1,4 +1,4 @@
-package com.daleharvey.mobilefuton;
+package com.ryanramage.mobilegarden;
 
 import java.io.IOException;
 import java.net.InetAddress;
