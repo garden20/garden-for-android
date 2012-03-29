@@ -19,7 +19,8 @@
 		</ant>
 
         <inifile source="${basedir}/assets/install/couchdb/etc/couchdb/android.default.ini" dest="${basedir}/assets/install/couchdb/etc/couchdb/android.default.ini">
-           <set section="httpd" property="secure_rewrites" value="true" />
+           <set section="httpd" property="secure_rewrites" value="false" />
+           <set section="log" property="level" value="info" />
         </inifile>
 
 		<!-- cleanup the tmp folder -->

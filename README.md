@@ -11,5 +11,6 @@ environment.
 
 - ant -f couchbase.xml
 - android update project --target 1 -p .
+- ant debug
 - adb install bin/MobileFutonActivity-debug.apk
 

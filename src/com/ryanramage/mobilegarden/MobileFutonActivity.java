@@ -63,12 +63,12 @@ public class MobileFutonActivity extends Activity {
 		    String param = (ip == null) ? "" : "?ip=" + ip;
 
 		    try {
-				couch.installDatabase("mobilefuton.couch");
+				couch.installDatabase("dashboard.couch");
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 
-			launchFuton(url + "mobilefuton/_design/mobilefuton/index.html" + param);
+			launchFuton(url + "dashboard/_design/dashboard/_rewrite/" + param);
 		}
 
 		@Override
