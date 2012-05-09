@@ -82,6 +82,9 @@ public class MobileFutonActivity extends Activity {
                 case R.id.home:
                     webView.loadUrl(gardenUrl);
                     return true;
+                case R.id.launch_browser:
+                    launchBrowser();
+                    return true;
                 default:
                     return super.onOptionsItemSelected(item);
             }
@@ -235,4 +238,11 @@ public class MobileFutonActivity extends Activity {
 		}
 		return null;
 	}
+
+        private void launchBrowser() {
+            Uri uri = Uri.parse(webView.getUrl());
+            Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+            startActivity(intent);
+            
+        }
 }
