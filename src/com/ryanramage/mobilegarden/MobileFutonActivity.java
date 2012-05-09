@@ -10,6 +10,13 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.ServiceConnection;
+import android.content.Context;
+import android.content.Intent;
+
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.MenuInflater;
+
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -19,6 +26,10 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.webkit.ValueCallback;
+
+import android.net.Uri;
+
 
 import com.couchbase.android.CouchbaseMobile;
 import com.couchbase.android.ICouchbaseDelegate;
@@ -31,6 +42,10 @@ public class MobileFutonActivity extends Activity {
 	private CouchbaseMobile couch;
 	private ServiceConnection couchServiceConnection;
 	private WebView webView;
+        protected Context context;
+        protected final static int FILECHOOSER_RESULTCODE = 1;
+
+        private String gardenUrl;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -54,6 +69,23 @@ public class MobileFutonActivity extends Activity {
 		}
 	}
 
+        @Override
+        public boolean onCreateOptionsMenu(Menu menu) {
+            MenuInflater inflater = getMenuInflater();
+            inflater.inflate(R.menu.garden_menu, menu);
+            return true;
+        }
+        @Override
+        public boolean onOptionsItemSelected(MenuItem item) {
+            // Handle item selection
+            switch (item.getItemId()) {
+                case R.id.home:
+                    webView.loadUrl(gardenUrl);
+                    return true;
+                default:
+                    return super.onOptionsItemSelected(item);
+            }
+        }
 	private final ICouchbaseDelegate mCallback = new ICouchbaseDelegate() {
 		@Override
 		public void couchbaseStarted(String host, int port) {
@@ -68,7 +100,8 @@ public class MobileFutonActivity extends Activity {
 				e.printStackTrace();
 			}
 
-			launchFuton(url + "dashboard/_design/dashboard/_rewrite/" + param);
+                        gardenUrl = url + "dashboard/_design/dashboard/_rewrite/";
+			launchFuton(gardenUrl + param);
 		}
 
 		@Override
@@ -80,7 +113,8 @@ public class MobileFutonActivity extends Activity {
 
 
 	private void startCouch() {
-		couch = new CouchbaseMobile(getBaseContext(), mCallback);
+                context = getBaseContext();
+		couch = new CouchbaseMobile(context, mCallback);
 
 		try {
 			couch.copyIniFile("mobilefuton.ini");
@@ -151,6 +185,30 @@ public class MobileFutonActivity extends Activity {
 			return true;
 		}
 	}
+
+
+        protected class CustomWebChromeClient extends WebChromeClient
+        {
+            // For Android 3.0+
+            public void openFileChooser( ValueCallback<Uri> uploadMsg, String acceptType )
+            {
+
+                Object mUploadMessage = uploadMsg;
+                Intent i = new Intent(Intent.ACTION_GET_CONTENT);
+                i.addCategory(Intent.CATEGORY_OPENABLE);
+                if (acceptType == null) {
+                    acceptType = "*/*";
+                }
+                i.setType(acceptType);
+                startActivityForResult( Intent.createChooser( i, "File Chooser" ), FILECHOOSER_RESULTCODE );
+            }
+
+            // For Android < 3.0
+            public void openFileChooser( ValueCallback<Uri> uploadMsg )
+            {
+                openFileChooser( uploadMsg, "*/*" );
+            }
+        }
 
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {

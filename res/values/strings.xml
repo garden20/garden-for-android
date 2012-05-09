@@ -2,4 +2,5 @@
 <resources>
     <string name="hello">Hello World, CouchAppActivity!</string>
     <string name="app_name">Mobile Garden</string>
+    <string name="navigate_home">Garden Home</string>
 </resources>
