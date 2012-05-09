@@ -16,6 +16,8 @@ import android.content.Intent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MenuInflater;
+import android.view.Window;
+
 
 import android.os.Bundle;
 import android.util.Log;
@@ -27,6 +29,8 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.webkit.ValueCallback;
+
+import android.graphics.Bitmap;
 
 import android.net.Uri;
 
@@ -50,7 +54,8 @@ public class MobileFutonActivity extends Activity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.main);
+                getWindow().requestFeature(Window.FEATURE_PROGRESS);
+		setContentView(R.layout.main);                
 		startCouch();
 	}
 
@@ -152,7 +157,11 @@ public class MobileFutonActivity extends Activity {
 
 	private void launchFuton(String url) {
 
-		webView = new WebView(MobileFutonActivity.this);
+                setProgressBarVisibility(true);
+                setProgress(1000);
+
+
+		webView = new WebView(this);
 		webView.setWebChromeClient(new WebChromeClient());
 		webView.setWebViewClient(new CustomWebViewClient());
 		webView.getSettings().setJavaScriptEnabled(true);
@@ -160,38 +169,64 @@ public class MobileFutonActivity extends Activity {
 		webView.getSettings().setDomStorageEnabled(true);
 
 		webView.setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);
-
+                webView.getSettings().setBuiltInZoomControls(true);
 		webView.requestFocus(View.FOCUS_DOWN);
-	    webView.setOnTouchListener(new View.OnTouchListener() {
-	        @Override
-	        public boolean onTouch(View v, MotionEvent event) {
-	            switch (event.getAction()) {
-	                case MotionEvent.ACTION_DOWN:
-	                case MotionEvent.ACTION_UP:
-	                    if (!v.hasFocus()) {
-	                        v.requestFocus();
-	                    }
-	                    break;
-	            }
-	            return false;
-	        }
-	    });
+                webView.setOnTouchListener(new View.OnTouchListener() {
+                    @Override
+                    public boolean onTouch(View v, MotionEvent event) {
+                        switch (event.getAction()) {
+                            case MotionEvent.ACTION_DOWN:
+                            case MotionEvent.ACTION_UP:
+                                if (!v.hasFocus()) {
+                                    v.requestFocus();
+                                }
+                                break;
+                        }
+                        return false;
+                    }
+                });
 
 		setContentView(webView);
 		webView.loadUrl(url);
 	};
 
-	private class CustomWebViewClient extends WebViewClient {
+            private class CustomWebViewClient extends WebViewClient {
+
+                @Override
+                public void onPageFinished(WebView view, String url) {
+                    self.setProgress(10000);
+                    self.setProgressBarVisibility(false);
+                }
+
+                @Override
+                public void onPageStarted(WebView view, String url, Bitmap favicon) {
+                    self.setProgress(1200);
+                    self.setProgressBarVisibility(true);
+                }
+
 		@Override
 		public boolean shouldOverrideUrlLoading(WebView view, String url) {
 			view.loadUrl(url);
 			return true;
 		}
+
 	}
 
 
         protected class CustomWebChromeClient extends WebChromeClient
         {
+
+               @Override
+               public void onProgressChanged(WebView view, int progress) {
+                 // Activities and WebViews measure progress with different scales.
+                 // The progress meter will automatically disappear when we reach 100%
+
+                   int progress_total = progress * 1000;
+
+
+                   self.setProgress(progress_total);
+               }
+            
             // For Android 3.0+
             public void openFileChooser( ValueCallback<Uri> uploadMsg, String acceptType )
             {
