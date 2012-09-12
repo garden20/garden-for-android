@@ -162,7 +162,7 @@ public class MobileFutonActivity extends Activity {
 
 
 		webView = new WebView(this);
-		webView.setWebChromeClient(new WebChromeClient());
+		webView.setWebChromeClient(new CustomWebChromeClient());
 		webView.setWebViewClient(new CustomWebViewClient());
 		webView.getSettings().setJavaScriptEnabled(true);
 		webView.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
